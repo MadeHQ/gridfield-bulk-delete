@@ -31,11 +31,11 @@ class GridFieldBulkDeleteForm implements GridField_HTMLProvider, GridField_Actio
     protected $targetFragment;
 
     protected $message;
-    
+
     protected $status = 'good';
 
     // Set to less than 0 to never use queuedjob
-    protected $use_queued_threshold = 50;
+    protected $use_queued_threshold = -1;
 
     public function __construct($targetFragment = 'before', $threshold = null)
     {
@@ -93,13 +93,13 @@ class GridFieldBulkDeleteForm implements GridField_HTMLProvider, GridField_Actio
                 }
             }
         }
-        
+
         if (count($options) > 1) {
             $optionsField = DropdownField::create('BulkDeleteUntil', '', $options);
         } else {
             $optionsField = HiddenField::create('BulkDeleteUntil', $default_option_label, $default_option);
         }
-        
+
         $optionsField->setForm($gridField->getForm());
 
         $buttonTitle = (count($options) > 1) ? 'Go' : $default_option_label;
@@ -174,7 +174,7 @@ class GridFieldBulkDeleteForm implements GridField_HTMLProvider, GridField_Actio
         ) {
             $from = ($parent && $parent->hasMethod('getTitle')) ? $parent->getTitle() : $parent->Name;
             $title = sprintf('Delete %s record (%s) from %s', $records->Count(), FormField::name_to_label($records->dataClass()), $from);
-            
+
             $job = new QueuedBulkDeleteJob($records, $title, Member::currentUser());
             singleton('QueuedJobService')->queueJob($job);
 
@@ -191,7 +191,7 @@ class GridFieldBulkDeleteForm implements GridField_HTMLProvider, GridField_Actio
 
         // Otherwise start deleting straight away (may time out)
         $ids = array();
-        
+
         foreach ($records as $record) {
             array_push($ids, $record->ID);
             $record->delete();
