@@ -20,7 +20,7 @@
 	"require": {
 		"silverstripe/cms": "^5@dev",
         "silverstripe/admin": "^2@dev",
-        "silverstripe/vendor-plugin": "^1"
+        "silverstripe/vendor-plugin": "*"
 	},
 	"extra": {
         "expose": [
